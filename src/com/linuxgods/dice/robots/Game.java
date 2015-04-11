@@ -28,16 +28,26 @@ public class Game {
     }
 
     public static class State {
-        public final Optional<Board> board;
-        public final Phase phase;
+        private final Optional<Board> board;
+        private final Phase phase;
+        private final int level;
 
-        public State(Optional<Board> board, Phase phase) {
+        public State(Optional<Board> board, Phase phase, int level) {
             this.board = board;
             this.phase = phase;
+            this.level = level;
         }
 
         public Optional<Board> getBoard() {
             return board;
+        }
+
+        public Phase getPhase() {
+            return phase;
+        }
+
+        public int getLevel() {
+            return level;
         }
 
         interface Listener {

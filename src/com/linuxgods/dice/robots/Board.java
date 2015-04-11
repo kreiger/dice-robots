@@ -10,7 +10,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Board {
-    public static final Dimension TILES = new Dimension(25, 25);
+    public static final Dimension TILES = new Dimension(100, 100);
     private Map<Position, TileContent> tiles = new HashMap<>();
     private Random random = new Random();
 
@@ -59,7 +59,7 @@ public class Board {
    }
 
     public Position movePlayer(Direction direction) {
-        if (direction.equals(Direction.TP)) {
+        if (direction.equals(Direction.TELEPORT)) {
             return randomEmptyPosition();
         }
 

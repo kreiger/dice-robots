@@ -14,13 +14,13 @@ public class Main {
     public static void main(String[] args) {
         Game game = new Game();
 
-        ViewComponent viewComponent = new ViewComponent();
+        Game.State initialState = new Game.State(Optional.<Board>empty(), Game.Phase.START, 1);
+        ViewComponent viewComponent = new ViewComponent(initialState);
         JFrame jFrame = new MainFrame(viewComponent);
         BlockingQueue<Integer> keyCodeQueue = new LinkedBlockingQueue<>();
         jFrame.addKeyListener(new KeyListener(keyCodeQueue));
         jFrame.setVisible(true);
 
-        Game.State initialState = new Game.State(Optional.<Board>empty(), Game.Phase.START);
         game.mainLoop(initialState, viewComponent, getDirections(keyCodeQueue));
     }
 

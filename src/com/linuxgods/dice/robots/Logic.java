@@ -4,20 +4,24 @@ import com.linuxgods.dice.robots.Board.Position;
 import com.linuxgods.dice.robots.Board.TileContent;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static com.linuxgods.dice.robots.Board.Position.pos;
 import static com.linuxgods.dice.robots.Board.TileContent.ALIEN;
-import static com.linuxgods.dice.robots.Board.TileContent.PILE;
 
 class Logic {
 
+    public static final int ALIENS_PER_LEVEL = 10;
+
     public Game.State update(Game.State state, Direction direction) {
-        if (state.phase != Game.Phase.PLAYING) {
-            return new Game.State(Optional.of(initialBoard()), Game.Phase.PLAYING);
+        if (state.getPhase() == Game.Phase.WON) {
+            int nextLevel = state.getLevel() + 1;
+            return new Game.State(Optional.of(createBoard(nextLevel)), Game.Phase.PLAYING, nextLevel);
         }
-        Board board = state.board.get();
+        if (state.getPhase() != Game.Phase.PLAYING) {
+            return new Game.State(Optional.of(createBoard(1)), Game.Phase.PLAYING, 1);
+        }
+        Board board = state.getBoard().get();
         final Position newPlayerPosition = board.movePlayer(direction);
         final Optional<TileContent> contentOnNewPosition = board.getTileContent(newPlayerPosition);
         boolean dead = contentOnNewPosition
@@ -36,23 +40,22 @@ class Logic {
         }
         Board newBoard = boardBuilder.build();
 
-        return new Game.State(Optional.of(newBoard), newBoard.getPhase());
+        return new Game.State(Optional.of(newBoard), newBoard.getPhase(), state.getLevel());
     }
 
-    private static Board initialBoard() {
+    private static Board createBoard(int level) {
         BoardBuilder boardBuilder = new BoardBuilder()
                 .setPlayerPosition(pos(10, 10));
-        IntStream.range(0, 10)
+        IntStream.range(0, level * ALIENS_PER_LEVEL)
                 .forEach(i -> boardBuilder.placeRandomAlien());
         return boardBuilder.build();
     }
 
-    private boolean moveAliens(Position playerPosition, Board initialBoard, BoardBuilder boardBuilder) {
-        for (Position initialAlienPosition : initialBoard.getPositionsFor(ALIEN).collect(Collectors.toList())) {
+    private void moveAliens(Position playerPosition, Board initialBoard, BoardBuilder boardBuilder) {
+        initialBoard.getPositionsFor(ALIEN).forEach(initialAlienPosition -> {
             final Direction directionToPlayer = initialAlienPosition.getDirectionTo(playerPosition);
             Position newAlienPosition = initialAlienPosition.move(directionToPlayer);
             boardBuilder.setAlienPosition(newAlienPosition);
-        }
-        return false;
+        });
     }
 }

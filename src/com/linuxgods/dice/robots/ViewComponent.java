@@ -5,9 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Optional;
 import java.util.function.Consumer;
-
 
 class ViewComponent extends JComponent implements Game.State.Listener {
 
@@ -36,9 +34,10 @@ class ViewComponent extends JComponent implements Game.State.Listener {
         }
     }
 
-    private Game.State state = new Game.State(Optional.<Board>empty(), Game.Phase.START);
+    private Game.State state;
 
-    ViewComponent() {
+    ViewComponent(Game.State state) {
+        this.state = state;
     }
 
     private static Rectangle getTileRectangle(Board.Position boardPosition) {
@@ -74,7 +73,7 @@ class ViewComponent extends JComponent implements Game.State.Listener {
     public void paint(Graphics g) {
         drawBoard(g);
         g.setColor(Color.GREEN);
-        g.drawString("Alien robots from Mars " + state.phase, 100, 100);
+        g.drawString("Alien robots from Mars " + state.getPhase(), 100, 100);
     }
 
     private void drawBoard(Graphics g) {
