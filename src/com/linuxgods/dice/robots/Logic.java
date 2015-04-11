@@ -5,8 +5,7 @@ import com.linuxgods.dice.robots.Board.TileContent;
 
 import java.util.Optional;
 
-import static com.linuxgods.dice.robots.Board.TileContent.PLAYER;
-import static com.linuxgods.dice.robots.Board.TileContent.ROBOT;
+import static com.linuxgods.dice.robots.Board.TileContent.*;
 import static com.linuxgods.dice.robots.GameState.*;
 
 class Logic {
@@ -34,7 +33,7 @@ class Logic {
         final Position newPosition = initialPlayerPosition.move(direction);
         final Optional<TileContent> contentOnNewPosition = board.getTileContent(newPosition);
         boolean dead = contentOnNewPosition
-                .filter(tile -> (tile == ROBOT || tile == TileContent.SCRAP))
+                .filter(tile -> (tile == ALIEN || tile == PILE))
                 .isPresent();
         if (dead) {
             return true;
@@ -52,7 +51,7 @@ class Logic {
     }
 
     private boolean moveRobots() {
-        board.getCoordinatesFor(ROBOT).forEach(initialRobotPosition -> {
+        board.getCoordinatesFor(ALIEN).forEach(initialRobotPosition -> {
             final Direction directionToPlayer = getDirectionToPlayer(initialRobotPosition);
             Position newRobotPosition = initialRobotPosition.move(directionToPlayer);
             moveTile(initialRobotPosition, newRobotPosition);
