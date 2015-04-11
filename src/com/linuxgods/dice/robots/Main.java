@@ -27,8 +27,7 @@ public class Main {
     private static Stream<Direction> getDirections(BlockingQueue<Integer> keyCodeQueue) {
         return getKeyCodes(keyCodeQueue)
                 .mapToObj(Direction::forKeyCode)
-                .filter(Optional::isPresent).map(Optional::get)
-                .peek(System.out::println);
+                .filter(Optional::isPresent).map(Optional::get);
     }
 
 
