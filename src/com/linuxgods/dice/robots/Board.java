@@ -1,35 +1,49 @@
 package com.linuxgods.dice.robots;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
+
+import static com.linuxgods.dice.robots.Board.Position.pos;
 
 public class Board {
     public static final Dimension TILES = new Dimension(100, 100);
-    private Map<Coordinate, TileContent> tiles = new HashMap<Coordinate, TileContent>();
+    private Map<Position, TileContent> tiles = new HashMap<>();
+    private Random random = new Random();
 
-    private Optional<TileContent> getTile(Coordinate coordinate) {
-        return Optional.ofNullable(tiles.get(coordinate));
+    public Optional<TileContent> getTileContent(Position Position) {
+        return Optional.ofNullable(tiles.get(Position));
     }
 
-    public Coordinate getPlayerCoordinate() {
+    public Position getPlayerCoordinate() {
         return getCoordinatesFor(TileContent.PLAYER)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No player!?"));
     }
 
-    public Stream<Coordinate> getCoordinatesFor(TileContent tileContent) {
+    public Stream<Position> getCoordinatesFor(TileContent tileContent) {
         return tiles.entrySet().stream()
                 .filter(entry -> entry.getValue() == tileContent)
                 .map(Map.Entry::getKey);
     }
 
-    public void addPlayer(int x, int y) {
-        tiles.put(new Coordinate(x,y), TileContent.PLAYER);
+    public void setTileContent(Position Position, TileContent tileContent) {
+        tiles.put(Position, tileContent);
     }
+
+    public Position randomCoordinate() {
+        return new Position(random.nextInt(TILES.width), random.nextInt(TILES.height));
+    }
+
+    public Stream<Position> positions() {
+        return IntStream.range(0, TILES.height)
+                .boxed()
+                .flatMap(y -> IntStream.range(0, TILES.width)
+                        .boxed()
+                        .map(x -> pos(x, y)));
+   }
+
 
     public enum TileContent {
         PLAYER,
@@ -37,19 +51,23 @@ public class Board {
         SCRAP;
     }
 
-    public static class Coordinate {
-        public final int x,y;
+    public static class Position {
+        public final int x, y;
 
-        public Coordinate(int x, int y) {
+        private Position(int x, int y) {
             this.x = x;
             this.y = y;
+        }
+
+        public static Position pos(int x, int y) {
+            return new Position(x, y);
         }
 
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            Coordinate that = (Coordinate) o;
+            Position that = (Position) o;
             return Objects.equals(x, that.x) &&
                     Objects.equals(y, that.y);
         }
@@ -59,9 +77,6 @@ public class Board {
             return Objects.hash(x, y);
         }
 
-        public boolean is(int x, int y) {
-            return equals(new Coordinate(x,y));
-        }
     }
 
 }
