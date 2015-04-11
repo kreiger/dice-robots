@@ -6,6 +6,8 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.linuxgods.dice.robots.Board.Position.pos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 public class Board {
     public static final Dimension TILES = new Dimension(100, 100);
@@ -45,9 +47,14 @@ public class Board {
     }
 
     public Stream<Position> positions() {
-        return IntStream.range(0, TILES.height)
+        return positions(pos(0, 0), pos(TILES.width, TILES.height));
+    }
+
+    public Stream<Position> positions(Position from, Position to) {
+
+        return IntStream.range(max(0, from.y), min(to.y, TILES.width))
                 .boxed()
-                .flatMap(y -> IntStream.range(0, TILES.width)
+                .flatMap(y -> IntStream.range(max(0, from.x), min(to.x, TILES.height))
                         .boxed()
                         .map(x -> pos(x, y)));
    }
@@ -91,6 +98,10 @@ public class Board {
 
         public Position move(Direction direction) {
             return new Position(x + direction.getDx(), y + direction.getDy());
+        }
+
+        public Position plus(int x, int y) {
+            return new Position(this.x + x, this.y + y);
         }
 
         @Override
