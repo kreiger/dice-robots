@@ -53,6 +53,12 @@ public class BoardBuilder {
         return this;
     }
 
+    public BoardBuilder copyAllPiles(Board referenceBoard) {
+        referenceBoard.getPositionsFor(PILE).forEach(alienPosition ->
+                board.setTileContent(alienPosition, PILE));
+        return this;
+    }
+
     public void placeRandomAlien() {
         board.setTileContent(board.randomEmptyPosition(), ALIEN);
     }

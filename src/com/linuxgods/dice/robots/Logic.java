@@ -17,7 +17,8 @@ class Logic {
                 .filter(this::isDeadly)
                 .isPresent();
 
-        final BoardBuilder boardBuilder = new BoardBuilder();
+        final BoardBuilder boardBuilder = new BoardBuilder()
+                .copyAllPiles(initialBoard);
         if (dead) {
             boardBuilder
                     .copyAllAliens(initialBoard)
