@@ -5,7 +5,23 @@ import java.util.Optional;
 import static java.awt.event.KeyEvent.*;
 
 public enum Direction {
-    N, NE, E, SE, S, SW, W, NW;
+    N(0, 1), NE(1, 1), E(1, 0), SE(1, -1), S(0, -1), SW(-1, -1), W(-1, 0), NW(-1, 1);
+
+    private int dx;
+    private int dy;
+
+    Direction(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
+    }
+
+    public int getDx() {
+        return dx;
+    }
+
+    public int getDy() {
+        return dy;
+    }
 
     private static Direction forKeyCodeOrNull(int keyCode) {
         switch (keyCode) {

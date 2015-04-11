@@ -16,7 +16,7 @@ public class Board {
         return Optional.ofNullable(tiles.get(Position));
     }
 
-    public Position getPlayerCoordinate() {
+    public Position getPlayerPosition() {
         return getCoordinatesFor(TileContent.PLAYER)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No player!?"));
@@ -30,6 +30,10 @@ public class Board {
 
     public void setTileContent(Position Position, TileContent tileContent) {
         tiles.put(Position, tileContent);
+    }
+
+    public void clearTile(Position position) {
+        tiles.remove(position);
     }
 
     public Position randomCoordinate() {
@@ -61,6 +65,10 @@ public class Board {
 
         public static Position pos(int x, int y) {
             return new Position(x, y);
+        }
+
+        public Position move(Direction direction) {
+            return new Position(x + direction.getDx(), y + direction.getDy());
         }
 
         @Override
