@@ -50,7 +50,9 @@ public enum Direction {
                 return W;
             case VK_NUMPAD7:
                 return NW;
-
+            case VK_T:
+            case VK_SPACE:
+                return TP;
         }
         return null;
     }
