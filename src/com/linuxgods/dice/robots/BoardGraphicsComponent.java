@@ -30,7 +30,7 @@ class BoardGraphicsComponent extends JComponent implements Game.Listener {
 
     private Board board;
 
-    BoardGraphicsComponent() {
+    BoardGraphicsComponent(Board board) {
         this.board = board;
     }
 
@@ -71,7 +71,7 @@ class BoardGraphicsComponent extends JComponent implements Game.Listener {
     }
 
     @Override
-    public void boardUpdated(Board board) {
+    public void notifyBoardUpdated(Board board) {
         this.board = board;
         repaint();
     }
