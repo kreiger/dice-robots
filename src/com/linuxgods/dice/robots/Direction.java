@@ -29,26 +29,34 @@ public enum Direction {
             case VK_UP :
             case VK_KP_UP :
             case VK_NUMPAD8:
+            case VK_W:
                 return N;
             case VK_NUMPAD9:
+            case VK_E:
                 return NE;
             case VK_RIGHT:
             case VK_KP_RIGHT:
             case VK_NUMPAD6:
+            case VK_D:
                 return E;
             case VK_NUMPAD3:
+            case VK_C:
                 return SE;
             case VK_DOWN:
             case VK_KP_DOWN:
             case VK_NUMPAD2:
+            case VK_X:
                 return S;
             case VK_NUMPAD1:
+            case VK_Z:
                 return SW;
             case VK_LEFT:
             case VK_KP_LEFT:
             case VK_NUMPAD4:
+            case VK_A:
                 return W;
             case VK_NUMPAD7:
+            case VK_Q:
                 return NW;
             case VK_T:
             case VK_SPACE:
