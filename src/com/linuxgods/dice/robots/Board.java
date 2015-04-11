@@ -18,10 +18,9 @@ public class Board {
         return Optional.ofNullable(tiles.get(Position));
     }
 
-    public Position getPlayerPosition() {
+    public Optional<Position> getPlayerPosition() {
         return getPositionsFor(TileContent.PLAYER)
-                .findFirst()
-                .orElseThrow(() -> new RuntimeException("No player!?"));
+                .findFirst();
     }
 
     public Stream<Position> getPositionsFor(TileContent tileContent) {
@@ -64,7 +63,7 @@ public class Board {
             return randomEmptyPosition();
         }
 
-        final Position initialPlayerPosition = getPlayerPosition();
+        final Position initialPlayerPosition = getPlayerPosition().orElseThrow(() -> new RuntimeException("No player!"));
         final Position newPosition = initialPlayerPosition.move(direction);
         if (isOutOfBounds(newPosition)) {
             return initialPlayerPosition;
@@ -74,6 +73,16 @@ public class Board {
 
     private boolean isOutOfBounds(Position position) {
         return position.x < 0 || position.y < 0 || position.x >= TILES.width || position.y >= TILES.height;
+    }
+
+    public Game.Phase getPhase() {
+        if (!getPlayerPosition().isPresent()) {
+            return Game.Phase.LOST;
+        }
+        if (0 == getPositionsFor(TileContent.ALIEN).count()) {
+            return Game.Phase.WON;
+        }
+        return Game.Phase.PLAYING;
     }
 
 

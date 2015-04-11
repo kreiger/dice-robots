@@ -4,8 +4,8 @@ import javax.swing.*;
 
 public class MainFrame extends JFrame {
 
-    public MainFrame(BoardGraphicsComponent boardGraphicsComponent) {
-        getContentPane().add(boardGraphicsComponent);
+    public MainFrame(ViewComponent viewComponent) {
+        getContentPane().add(viewComponent);
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);

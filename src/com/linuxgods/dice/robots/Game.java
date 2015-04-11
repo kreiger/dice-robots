@@ -1,5 +1,6 @@
 package com.linuxgods.dice.robots;
 
+import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -7,12 +8,12 @@ import java.util.stream.Stream;
 
 public class Game {
 
-    public void mainLoop(Board board, Listener listener, Stream<Direction> directions) {
-        directions.reduce(board, updateBoard().andThen(notify(listener)), (b1, b2) -> b1);
+    public void mainLoop(State state, State.Listener listener, Stream<Direction> directions) {
+        directions.reduce(state, updateState().andThen(notify(listener)), (b1, b2) -> b1);
     }
 
-    private Function<Board, Board> notify(Listener listener) {
-        return peek(listener::notifyBoardUpdated);
+    private Function<State, State> notify(State.Listener listener) {
+        return peek(listener::notify);
     }
 
     private static <T> Function<T,T> peek(Consumer<T> consumer) {
@@ -22,11 +23,33 @@ public class Game {
         };
     }
 
-    private BiFunction<Board, Direction, Board> updateBoard() {
+    private BiFunction<State, Direction, State> updateState() {
         return new Logic()::update;
     }
 
-    public interface Listener {
-        void notifyBoardUpdated(Board board);
+    public static class State {
+        public final Optional<Board> board;
+        public final Phase phase;
+
+        public State(Optional<Board> board, Phase phase) {
+            this.board = board;
+            this.phase = phase;
+        }
+
+        public Optional<Board> getBoard() {
+            return board;
+        }
+
+        interface Listener {
+            void notify(State state);
+        }
+
+    }
+
+    public enum Phase {
+        START,
+        PLAYING,
+        LOST,
+        WON
     }
 }

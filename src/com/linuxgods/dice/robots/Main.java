@@ -9,32 +9,20 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-import static com.linuxgods.dice.robots.Board.Position.pos;
-
 public class Main {
 
     public static void main(String[] args) {
         Game game = new Game();
 
-        Board board = initialBoard();
-        BoardGraphicsComponent boardGraphicsComponent = new BoardGraphicsComponent(board);
-        JFrame jFrame = new MainFrame(boardGraphicsComponent);
+        ViewComponent viewComponent = new ViewComponent();
+        JFrame jFrame = new MainFrame(viewComponent);
         BlockingQueue<Integer> keyCodeQueue = new LinkedBlockingQueue<>();
         jFrame.addKeyListener(new KeyListener(keyCodeQueue));
         jFrame.setVisible(true);
 
-        game.mainLoop(board, boardGraphicsComponent, getDirections(keyCodeQueue));
+        Game.State initialState = new Game.State(Optional.<Board>empty(), Game.Phase.START);
+        game.mainLoop(initialState, viewComponent, getDirections(keyCodeQueue));
     }
-
-    private static Board initialBoard() {
-        BoardBuilder boardBuilder = new BoardBuilder()
-                .setPlayerPosition(pos(10, 10));
-        IntStream.range(0, 10)
-                .forEach(i -> boardBuilder.placeRandomAlien());
-        return boardBuilder.build();
-    }
-
-
 
     private static Stream<Direction> getDirections(BlockingQueue<Integer> keyCodeQueue) {
         return getKeyCodes(keyCodeQueue)
