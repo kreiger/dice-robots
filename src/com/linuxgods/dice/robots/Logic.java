@@ -11,7 +11,7 @@ import static com.linuxgods.dice.robots.Board.TileContent.*;
 class Logic {
 
     public Board update(Board initialBoard, Direction direction) {
-        final Position newPlayerPosition = initialBoard.getPlayerPosition().move(direction);
+        final Position newPlayerPosition = initialBoard.movePlayer(direction);
         final Optional<TileContent> contentOnNewPosition = initialBoard.getTileContent(newPlayerPosition);
         boolean dead = contentOnNewPosition
                 .filter(this::isDeadly)

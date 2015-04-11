@@ -6,7 +6,7 @@ import java.util.stream.Stream;
 import static java.awt.event.KeyEvent.*;
 
 public enum Direction {
-    N(0, 1), NE(1, 1), E(1, 0), SE(1, -1), S(0, -1), SW(-1, -1), W(-1, 0), NW(-1, 1);
+    N(0, 1), NE(1, 1), E(1, 0), SE(1, -1), S(0, -1), SW(-1, -1), W(-1, 0), NW(-1, 1), TP(0, 0);
 
     private final int dx;
     private final int dy;

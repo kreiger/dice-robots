@@ -52,6 +52,23 @@ public class Board {
                         .map(x -> pos(x, y)));
    }
 
+    public Position movePlayer(Direction direction) {
+        if (direction.equals(Direction.TP)) {
+            return randomEmptyPosition();
+        }
+
+        final Position initialPlayerPosition = getPlayerPosition();
+        final Position newPosition = initialPlayerPosition.move(direction);
+        if (isOutOfBounds(newPosition)) {
+            return initialPlayerPosition;
+        }
+        return newPosition;
+    }
+
+    private boolean isOutOfBounds(Position position) {
+        return position.x < 0 || position.y < 0 || position.x >= TILES.width || position.y >= TILES.height;
+    }
+
 
     public enum TileContent {
         PLAYER,
