@@ -3,19 +3,24 @@ package com.linuxgods.dice.robots;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.function.Consumer;
+
 
 class ViewComponent extends JComponent implements Game.State.Listener {
 
     private static final Dimension CAMERA = new Dimension(27, 27);
     private static final Dimension TILE = new Dimension(27, 27);
     private static final Dimension PADDING = new Dimension(0, 0);
+    private static final Dimension MINI_MAP_SIZE = new Dimension(8, 8);
+
     private static final Dimension VISIBLE = new Dimension(CAMERA.width * TILE.width, CAMERA.height * TILE.height);
     private static final Dimension BOARD_WITH_PADDING = new Dimension(VISIBLE.width + PADDING.width * 2, VISIBLE.height + PADDING.height * 2);
 
     private static final Color GRID_LINE_COLOR = new Color(183, 183, 183);
-    private static final Color GRID_FILL_COLOR = new Color(217, 217, 217);
+    private static final Color GRID_FILL_COLOR = new Color(231, 231, 231);
 
     private static final Image PLAYER_IMAGE;
     private static final Image ALIEN_IMAGE;
@@ -43,6 +48,28 @@ class ViewComponent extends JComponent implements Game.State.Listener {
         return new Rectangle(tileCoordinate.x, tileCoordinate.y, TILE.width, TILE.height);
     }
 
+    private Image drawMiniMap(Graphics g, Board board) {
+
+        final BufferedImage minimap = new BufferedImage(Board.TILES.width, Board.TILES.height, BufferedImage.TYPE_INT_ARGB);
+        board.positions().forEach(setMiniMapColor(minimap, board));
+        g.drawImage(minimap, PADDING.width, BOARD_WITH_PADDING.height - TILE.height*MINI_MAP_SIZE.height - PADDING.height, TILE.width*MINI_MAP_SIZE.width, TILE.height*MINI_MAP_SIZE.height, null);
+
+        return minimap;
+    }
+
+    private Consumer<Board.Position> setMiniMapColor(BufferedImage minimap, Board board) {
+        return pos -> {
+            int color = getMiniMapColor(pos, board);
+            minimap.setRGB(pos.x, minimap.getHeight()-pos.y-1, color);
+        };
+    }
+
+    private int getMiniMapColor(Board.Position pos, Board board) {
+        return board.getTileContent(pos)
+                        .map(this::getMiniMapColor)
+                        .orElse(new Color(184, 181, 184).getRGB());
+    }
+
     @Override
     public void paint(Graphics g) {
         drawBoard(g);
@@ -66,6 +93,7 @@ class ViewComponent extends JComponent implements Game.State.Listener {
                                 .map(this::getImage)
                                 .ifPresent(image -> g.drawImage(image, tile.x, tile.y, tile.width, tile.height, null));
                     });
+                    drawMiniMap(g, board);
                 }));
     }
 
@@ -77,6 +105,19 @@ class ViewComponent extends JComponent implements Game.State.Listener {
                 return PILE_IMAGE;
             default:
                 return ALIEN_IMAGE;
+        }
+    }
+
+    private int getMiniMapColor(Board.TileContent tileContent) {
+        switch (tileContent) {
+            case PLAYER:
+                return new Color(0, 151, 8).getRGB();
+            case PILE:
+                return new Color(255, 252, 28).getRGB();
+            case ALIEN:
+                return new Color(255, 0, 0).getRGB();
+            default:
+                return new Color(184, 181, 184).getRGB();
         }
     }
 
