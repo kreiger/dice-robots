@@ -14,7 +14,7 @@ class Logic {
         final Position newPlayerPosition = initialBoard.movePlayer(direction);
         final Optional<TileContent> contentOnNewPosition = initialBoard.getTileContent(newPlayerPosition);
         boolean dead = contentOnNewPosition
-                .filter(this::isDeadly)
+                .filter(TileContent::isDeadly)
                 .isPresent();
 
         final BoardBuilder boardBuilder = new BoardBuilder()
@@ -28,10 +28,6 @@ class Logic {
             moveAliens(newPlayerPosition, initialBoard, boardBuilder);
         }
         return boardBuilder.build();
-    }
-
-    private boolean isDeadly(TileContent tile) {
-        return tile == ALIEN || tile == PILE;
     }
 
     private boolean moveAliens(Position playerPosition, Board initialBoard, BoardBuilder boardBuilder) {

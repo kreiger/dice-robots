@@ -10,7 +10,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 
 public class Board {
-    public static final Dimension TILES = new Dimension(100, 100);
+    public static final Dimension TILES = new Dimension(25, 25);
     private Map<Position, TileContent> tiles = new HashMap<>();
     private Random random = new Random();
 
@@ -78,10 +78,20 @@ public class Board {
 
 
     public enum TileContent {
-        PLAYER,
-        ALIEN,
-        PILE,
-        TOMBSTONE
+        PLAYER(false),
+        ALIEN(true),
+        PILE(true),
+        TOMBSTONE(false);
+
+        private boolean deadly;
+
+        TileContent(boolean deadly) {
+            this.deadly = deadly;
+        }
+
+        public boolean isDeadly() {
+            return deadly;
+        }
     }
 
     public static class Position {
