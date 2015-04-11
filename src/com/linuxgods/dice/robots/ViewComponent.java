@@ -2,6 +2,7 @@ package com.linuxgods.dice.robots;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.function.Consumer;
 
@@ -56,8 +57,31 @@ class ViewComponent extends JComponent implements Game.State.Listener {
     @Override
     public void paint(Graphics g) {
         drawBoard(g);
-        g.setColor(Color.GREEN);
-        g.drawString("Alien robots from Mars " + state.getPhase(), 100, 100);
+        if (state.getPhase() != Game.Phase.PLAYING) {
+            drawTitel(g);
+        }
+    }
+
+    private void drawTitel(Graphics g) {
+        final String string = getStringToPrint();
+
+        g.setColor(Color.RED);
+        g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 24));
+        final Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(string, g);
+        g.drawString(string, getPreferredSize().width/2 - (int) stringBounds.getWidth()/2, 100);
+    }
+
+    private String getStringToPrint() {
+        switch (state.getPhase()) {
+            case START:
+                return "Alien robots from Mars";
+            case LOST:
+                return "You lose!";
+            case WON:
+                return "A winner is you, now play next level!";
+            default:
+                return "What?";
+        }
     }
 
     private void drawBoard(Graphics g) {
