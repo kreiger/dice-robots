@@ -95,16 +95,20 @@ public class Board {
 
 
     public enum TileContent {
-        PLAYER(false, "player.png"),
-        ALIEN(true, "alien.png"),
-        PILE(true, "pile.png"),
-        TOMBSTONE(false, "tomb.png");
 
-        private final Image image;
-        private boolean deadly;
+        PLAYER(false, "player.png", new Color(0, 151, 8)),
+        ALIEN(true, "alien.png", new Color(151, 0, 6)),
+        PILE(true, "pile.png", new Color(255, 252, 28)),
+        TOMBSTONE(false, "tomb.png",  new Color(53, 53, 53));
 
-        TileContent(boolean deadly, String fileName) {
+        private final boolean deadly;
+        private final Color color;
+            private final Image image;
+
+        TileContent(boolean deadly, String fileName, Color color) {
             this.deadly = deadly;
+            this.color = color;
+
             try {
                 this.image = ImageIO.read(Board.class.getResourceAsStream(fileName));
             } catch (IOException e) {
@@ -118,6 +122,11 @@ public class Board {
 
         public Image getImage() {
             return image;
+        }
+
+        public Color getColor() {
+            return color;
+
         }
     }
 

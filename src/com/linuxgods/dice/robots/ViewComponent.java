@@ -43,15 +43,15 @@ class ViewComponent extends JComponent implements Game.State.Listener {
 
     private Consumer<Board.Position> setMiniMapColor(BufferedImage minimap, Board board) {
         return pos -> {
-            int color = getMiniMapColor(pos, board);
+            int color = getMiniMapColor(pos, board).getRGB();
             minimap.setRGB(pos.x, minimap.getHeight() - pos.y - 1, color);
         };
     }
 
-    private int getMiniMapColor(Board.Position pos, Board board) {
+    private Color getMiniMapColor(Board.Position pos, Board board) {
         return board.getTileContent(pos)
-                .map(this::getMiniMapColor)
-                .orElse(new Color(184, 181, 184).getRGB());
+                .map(Board.TileContent::getColor)
+                .orElse(new Color(184, 181, 184, 130));
     }
 
     @Override
@@ -68,7 +68,7 @@ class ViewComponent extends JComponent implements Game.State.Listener {
         g.setColor(Color.RED);
         g.setFont(new Font(g.getFont().getFontName(), Font.BOLD, 24));
         final Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(string, g);
-        g.drawString(string, getPreferredSize().width/2 - (int) stringBounds.getWidth()/2, 100);
+        g.drawString(string, getPreferredSize().width / 2 - (int) stringBounds.getWidth() / 2, 100);
     }
 
     private String getStringToPrint() {
@@ -102,19 +102,6 @@ class ViewComponent extends JComponent implements Game.State.Listener {
                     });
                     drawMiniMap(g, board);
                 }));
-    }
-
-    private int getMiniMapColor(Board.TileContent tileContent) {
-        switch (tileContent) {
-            case PLAYER:
-                return new Color(0, 151, 8).getRGB();
-            case PILE:
-                return new Color(255, 252, 28).getRGB();
-            case ALIEN:
-                return new Color(255, 0, 0).getRGB();
-            default:
-                return new Color(184, 181, 184).getRGB();
-        }
     }
 
     @Override
