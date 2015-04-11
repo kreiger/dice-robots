@@ -1,10 +1,8 @@
 package com.linuxgods.dice.robots;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.function.Consumer;
 
 class ViewComponent extends JComponent implements Game.State.Listener {
@@ -19,20 +17,6 @@ class ViewComponent extends JComponent implements Game.State.Listener {
 
     private static final Color GRID_LINE_COLOR = new Color(183, 183, 183);
     private static final Color GRID_FILL_COLOR = new Color(231, 231, 231);
-
-    private static final Image PLAYER_IMAGE;
-    private static final Image ALIEN_IMAGE;
-    private static final Image PILE_IMAGE;
-
-    static {
-        try {
-            PLAYER_IMAGE = ImageIO.read(ViewComponent.class.getResourceAsStream("player.png"));
-            ALIEN_IMAGE = ImageIO.read(ViewComponent.class.getResourceAsStream("alien.png"));
-            PILE_IMAGE = ImageIO.read(ViewComponent.class.getResourceAsStream("pile.png"));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     private Game.State state;
 
@@ -51,7 +35,7 @@ class ViewComponent extends JComponent implements Game.State.Listener {
 
         final BufferedImage minimap = new BufferedImage(Board.TILES.width, Board.TILES.height, BufferedImage.TYPE_INT_ARGB);
         board.positions().forEach(setMiniMapColor(minimap, board));
-        g.drawImage(minimap, PADDING.width, BOARD_WITH_PADDING.height - TILE.height*MINI_MAP_SIZE.height - PADDING.height, TILE.width*MINI_MAP_SIZE.width, TILE.height*MINI_MAP_SIZE.height, null);
+        g.drawImage(minimap, PADDING.width, BOARD_WITH_PADDING.height - TILE.height * MINI_MAP_SIZE.height - PADDING.height, TILE.width * MINI_MAP_SIZE.width, TILE.height * MINI_MAP_SIZE.height, null);
 
         return minimap;
     }
@@ -59,14 +43,14 @@ class ViewComponent extends JComponent implements Game.State.Listener {
     private Consumer<Board.Position> setMiniMapColor(BufferedImage minimap, Board board) {
         return pos -> {
             int color = getMiniMapColor(pos, board);
-            minimap.setRGB(pos.x, minimap.getHeight()-pos.y-1, color);
+            minimap.setRGB(pos.x, minimap.getHeight() - pos.y - 1, color);
         };
     }
 
     private int getMiniMapColor(Board.Position pos, Board board) {
         return board.getTileContent(pos)
-                        .map(this::getMiniMapColor)
-                        .orElse(new Color(184, 181, 184).getRGB());
+                .map(this::getMiniMapColor)
+                .orElse(new Color(184, 181, 184).getRGB());
     }
 
     @Override
@@ -89,22 +73,11 @@ class ViewComponent extends JComponent implements Game.State.Listener {
                         g.setColor(GRID_LINE_COLOR);
                         g.drawRect(tile.x, tile.y, tile.width, tile.height);
                         board.getTileContent(pos)
-                                .map(this::getImage)
+                                .map(Board.TileContent::getImage)
                                 .ifPresent(image -> g.drawImage(image, tile.x, tile.y, tile.width, tile.height, null));
                     });
                     drawMiniMap(g, board);
                 }));
-    }
-
-    private Image getImage(Board.TileContent tileContent) {
-        switch (tileContent) {
-            case PLAYER:
-                return PLAYER_IMAGE;
-            case PILE:
-                return PILE_IMAGE;
-            default:
-                return ALIEN_IMAGE;
-        }
     }
 
     private int getMiniMapColor(Board.TileContent tileContent) {

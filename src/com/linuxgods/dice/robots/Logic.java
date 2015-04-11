@@ -14,12 +14,13 @@ class Logic {
     public static final int ALIENS_PER_LEVEL = 10;
 
     public Game.State update(Game.State state, Direction direction) {
-        if (state.getPhase() == Game.Phase.WON) {
-            int nextLevel = state.getLevel() + 1;
-            return new Game.State(Optional.of(createBoard(nextLevel)), Game.Phase.PLAYING, nextLevel);
-        }
-        if (state.getPhase() != Game.Phase.PLAYING) {
-            return new Game.State(Optional.of(createBoard(1)), Game.Phase.PLAYING, 1);
+        switch (state.getPhase()) {
+            case WON:
+                int nextLevel = state.getLevel() + 1;
+                return new Game.State(Optional.of(createBoard(nextLevel)), Game.Phase.PLAYING, nextLevel);
+            case LOST:
+            case START:
+                return new Game.State(Optional.of(createBoard(1)), Game.Phase.PLAYING, 1);
         }
         Board board = state.getBoard().get();
         final Position newPlayerPosition = board.movePlayer(direction);

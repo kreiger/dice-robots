@@ -1,11 +1,15 @@
 package com.linuxgods.dice.robots;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static com.linuxgods.dice.robots.Board.Position.pos;
+import static com.linuxgods.dice.robots.Board.TileContent.*;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 
@@ -19,13 +23,17 @@ public class Board {
     }
 
     public Optional<Position> getPlayerPosition() {
-        return getPositionsFor(TileContent.PLAYER)
+        return getPositionsFor(tc -> tc == PLAYER || tc == TOMBSTONE)
                 .findFirst();
     }
 
     public Stream<Position> getPositionsFor(TileContent tileContent) {
+        return getPositionsFor(tc -> tc == tileContent);
+    }
+
+    public Stream<Position> getPositionsFor(Predicate<TileContent> tileContentPredicate) {
         return tiles.entrySet().stream()
-                .filter(entry -> entry.getValue() == tileContent)
+                .filter(entry -> tileContentPredicate.test(entry.getValue()))
                 .map(Map.Entry::getKey);
     }
 
@@ -76,10 +84,10 @@ public class Board {
     }
 
     public Game.Phase getPhase() {
-        if (!getPlayerPosition().isPresent()) {
+        if (!getPositionsFor(tc -> tc == PLAYER).findFirst().isPresent()) {
             return Game.Phase.LOST;
         }
-        if (0 == getPositionsFor(TileContent.ALIEN).count()) {
+        if (0 == getPositionsFor(ALIEN).count()) {
             return Game.Phase.WON;
         }
         return Game.Phase.PLAYING;
@@ -87,19 +95,29 @@ public class Board {
 
 
     public enum TileContent {
-        PLAYER(false),
-        ALIEN(true),
-        PILE(true),
-        TOMBSTONE(false);
+        PLAYER(false, "player.png"),
+        ALIEN(true, "alien.png"),
+        PILE(true, "pile.png"),
+        TOMBSTONE(false, "tomb.png");
 
+        private final Image image;
         private boolean deadly;
 
-        TileContent(boolean deadly) {
+        TileContent(boolean deadly, String fileName) {
             this.deadly = deadly;
+            try {
+                this.image = ImageIO.read(Board.class.getResourceAsStream(fileName));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         public boolean isDeadly() {
             return deadly;
+        }
+
+        public Image getImage() {
+            return image;
         }
     }
 
