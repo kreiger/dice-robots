@@ -47,7 +47,7 @@ public class Board {
 
     public enum TileContent {
         PLAYER,
-        ROBOT,
+        ALIEN,
         PILE;
     }
 

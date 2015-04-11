@@ -16,7 +16,7 @@ public class Main {
         Board board = new Board();
         board.setTileContent(pos(10, 10), PLAYER);
         IntStream.range(0, 10)
-                .forEach(i -> board.setTileContent(board.randomCoordinate(), Board.TileContent.ROBOT));
+                .forEach(i -> board.setTileContent(board.randomCoordinate(), Board.TileContent.ALIEN));
         BoardGraphicsComponent boardGraphicsComponent = new BoardGraphicsComponent(board);
         JFrame jFrame = new MainFrame(boardGraphicsComponent);
         jFrame.setVisible(true);
