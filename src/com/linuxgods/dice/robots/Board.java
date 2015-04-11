@@ -85,6 +85,10 @@ public class Board {
             return Objects.hash(x, y);
         }
 
+
+        public Direction getDirectionTo(Position position) {
+            return Direction.forDelta(position.x - x, position.y - y);
+        }
     }
 
 }

@@ -1,14 +1,15 @@
 package com.linuxgods.dice.robots;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static java.awt.event.KeyEvent.*;
 
 public enum Direction {
     N(0, 1), NE(1, 1), E(1, 0), SE(1, -1), S(0, -1), SW(-1, -1), W(-1, 0), NW(-1, 1);
 
-    private int dx;
-    private int dy;
+    private final int dx;
+    private final int dy;
 
     Direction(int dx, int dy) {
         this.dx = dx;
@@ -56,5 +57,14 @@ public enum Direction {
 
     public static Optional<Direction> forKeyCode(int keyCode) {
         return Optional.ofNullable(forKeyCodeOrNull(keyCode));
+    }
+
+    public static Direction forDelta(int deltaX, int deltaY) {
+        int signX = Integer.signum(deltaX);
+        int signY = Integer.signum(deltaY);
+        return Stream.of(values())
+                .filter(dir -> dir.dx == signX && dir.dy == signY)
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No direction for delta "+deltaX+","+deltaY));
     }
 }

@@ -64,6 +64,6 @@ class Logic {
     }
 
     private Direction getDirectionToPlayer(Position robotPosition) {
-        return null;
+        return robotPosition.getDirectionTo(board.getPlayerPosition());
     }
 }
