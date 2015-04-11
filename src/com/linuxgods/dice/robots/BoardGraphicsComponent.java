@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.IOException;
 
-class BoardGraphicsComponent extends JComponent {
+class BoardGraphicsComponent extends JComponent implements Game.Listener {
 
     private static final Dimension TILE_PIXELS = new Dimension(9,9);
     private static final Dimension BOARD_PADDING_PIXELS = new Dimension(5,5);
@@ -30,7 +30,7 @@ class BoardGraphicsComponent extends JComponent {
 
     private Board board;
 
-    BoardGraphicsComponent(Board board) {
+    BoardGraphicsComponent() {
         this.board = board;
     }
 
@@ -68,5 +68,11 @@ class BoardGraphicsComponent extends JComponent {
     @Override
     public Dimension getPreferredSize() {
         return BOARD_WITH_PADDING_PIXELS;
+    }
+
+    @Override
+    public void boardUpdated(Board board) {
+        this.board = board;
+        repaint();
     }
 }
