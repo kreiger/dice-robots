@@ -10,7 +10,8 @@ class BoardGraphicsComponent extends JComponent {
     private static final Dimension TILE_PIXELS = new Dimension(9,9);
     private static final Dimension BOARD_PADDING_PIXELS = new Dimension(5,5);
     private static final Dimension BOARD_WITH_PADDING_PIXELS = new Dimension(Board.TILES.width * TILE_PIXELS.width + BOARD_PADDING_PIXELS.width*2, Board.TILES.height * TILE_PIXELS.height + BOARD_PADDING_PIXELS.height*2);
-    private static final Color GRID_LINE_COLOR = new Color(198, 198, 198);
+    private static final Color GRID_LINE_COLOR = new Color(172, 172, 172);
+    private static final Color GRID_FILL_COLOR = new Color(198, 198, 198);
 
     private static final Image PLAYER_IMAGE;
     private static final Image ALIEN_IMAGE;
@@ -41,6 +42,8 @@ class BoardGraphicsComponent extends JComponent {
     public void paint(Graphics g) {
         board.positions().forEach(pos -> {
             Rectangle tile = getTileRectangle(pos);
+            g.setColor(GRID_FILL_COLOR);
+            g.fillRect(tile.x, tile.y, tile.width, tile.height);
             g.setColor(GRID_LINE_COLOR);
             g.drawRect(tile.x, tile.y, tile.width, tile.height);
             board.getTileContent(pos)
