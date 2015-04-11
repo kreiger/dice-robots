@@ -27,6 +27,10 @@ public class Board {
                 .map(Map.Entry::getKey);
     }
 
+    public void addPlayer(int x, int y) {
+        tiles.put(new Coordinate(x,y), TileContent.PLAYER);
+    }
+
     public enum TileContent {
         PLAYER,
         ROBOT,
@@ -53,6 +57,10 @@ public class Board {
         @Override
         public int hashCode() {
             return Objects.hash(x, y);
+        }
+
+        public boolean is(int x, int y) {
+            return equals(new Coordinate(x,y));
         }
     }
 

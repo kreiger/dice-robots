@@ -21,6 +21,12 @@ class BoardGraphicsComponent extends JComponent {
         }
     }
 
+    private Board board;
+
+    BoardGraphicsComponent(Board board) {
+        this.board = board;
+    }
+
     private static Rectangle getTileRectangle(Board.Coordinate boardCoordinate) {
         Point tileCoordinate = new Point(boardCoordinate.x * TILE_PIXELS.width+ BOARD_PADDING_PIXELS.width, boardCoordinate.y * TILE_PIXELS.height+ BOARD_PADDING_PIXELS.height);
         return new Rectangle(tileCoordinate.x, tileCoordinate.y, TILE_PIXELS.width, TILE_PIXELS.height);
@@ -33,7 +39,9 @@ class BoardGraphicsComponent extends JComponent {
             for (int x = 0; x < Board.TILES.width; x++) {
                 Rectangle tile = getTileRectangle(new Board.Coordinate(x, y));
                 g.drawRect(tile.x, tile.y, tile.width, tile.height);
-                g.drawImage(PLAYER_IMAGE, tile.x, tile.y, null);
+                if (board.getPlayerCoordinate().is(x,y)) {
+                    g.drawImage(PLAYER_IMAGE, tile.x, tile.y, null);
+                }
             }
         }
     }

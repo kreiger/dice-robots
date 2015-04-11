@@ -4,10 +4,7 @@ import javax.swing.*;
 
 public class MainFrame extends JFrame {
 
-    public MainFrame() {
-
-        BoardGraphicsComponent boardGraphicsComponent = new BoardGraphicsComponent();
-
+    public MainFrame(BoardGraphicsComponent boardGraphicsComponent) {
         getContentPane().add(boardGraphicsComponent);
         pack();
 
