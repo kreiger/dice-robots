@@ -14,7 +14,7 @@ public class Main {
 
     public static void main(String[] args) {
         Board board = new Board();
-        board.setTileContent(pos(50, 50), PLAYER);
+        board.setTileContent(pos(10, 10), PLAYER);
         IntStream.range(0, 10)
                 .forEach(i -> board.setTileContent(board.randomCoordinate(), Board.TileContent.ROBOT));
         BoardGraphicsComponent boardGraphicsComponent = new BoardGraphicsComponent(board);

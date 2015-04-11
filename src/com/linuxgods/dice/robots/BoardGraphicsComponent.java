@@ -9,7 +9,8 @@ class BoardGraphicsComponent extends JComponent {
 
     private static final Dimension TILE_PIXELS = new Dimension(9,9);
     private static final Dimension BOARD_PADDING_PIXELS = new Dimension(5,5);
-    private static final Dimension BOARD_WITH_PADDING_PIXELS = new Dimension(Board.TILES.width * TILE_PIXELS.width + BOARD_PADDING_PIXELS.width*2, Board.TILES.height * TILE_PIXELS.height + BOARD_PADDING_PIXELS.height*2);
+    private static final Dimension BOARD_PIXELS = new Dimension(Board.TILES.width * TILE_PIXELS.width, Board.TILES.height * TILE_PIXELS.height);
+    private static final Dimension BOARD_WITH_PADDING_PIXELS = new Dimension(BOARD_PIXELS.width+BOARD_PADDING_PIXELS.width*2, BOARD_PIXELS.height+BOARD_PADDING_PIXELS.height*2);
     private static final Color GRID_LINE_COLOR = new Color(172, 172, 172);
     private static final Color GRID_FILL_COLOR = new Color(198, 198, 198);
 
@@ -33,7 +34,7 @@ class BoardGraphicsComponent extends JComponent {
     }
 
     private static Rectangle getTileRectangle(Board.Position boardPosition) {
-        Point tileCoordinate = new Point(boardPosition.x * TILE_PIXELS.width+ BOARD_PADDING_PIXELS.width, boardPosition.y * TILE_PIXELS.height+ BOARD_PADDING_PIXELS.height);
+        Point tileCoordinate = new Point(boardPosition.x * TILE_PIXELS.width+ BOARD_PADDING_PIXELS.width, BOARD_PIXELS.height - TILE_PIXELS.height - boardPosition.y * TILE_PIXELS.height + BOARD_PADDING_PIXELS.height);
         return new Rectangle(tileCoordinate.x, tileCoordinate.y, TILE_PIXELS.width, TILE_PIXELS.height);
     }
 
