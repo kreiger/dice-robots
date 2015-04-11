@@ -2,9 +2,9 @@ package com.linuxgods.dice.robots;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
-import java.util.LinkedList;
-import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.stream.IntStream;
 
 import static com.linuxgods.dice.robots.Board.Position.pos;
@@ -21,7 +21,7 @@ public class Main {
         JFrame jFrame = new MainFrame(boardGraphicsComponent);
         jFrame.setVisible(true);
 
-        Queue<Integer> inputQueue = new LinkedList<>();
+        BlockingQueue<Integer> inputQueue = new LinkedBlockingQueue<>();
         jFrame.addKeyListener(new KeyListener(inputQueue));
 
         Logic logic = new Logic(board);
@@ -36,15 +36,10 @@ public class Main {
         }
     }
 
-    private static int getNextKeyCode(Queue<Integer> inputQueue) {
-
+    private static int getNextKeyCode(BlockingQueue<Integer> inputQueue) {
         while (true) {
-            Optional<Integer> optionalKeyCode = Optional.ofNullable(inputQueue.poll());
-            if (optionalKeyCode.isPresent()) {
-                return optionalKeyCode.get();
-            }
             try {
-                Thread.sleep(100);
+                return inputQueue.take();
             } catch (InterruptedException ignored) {}
         }
     }
