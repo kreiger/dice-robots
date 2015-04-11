@@ -3,14 +3,17 @@ package com.linuxgods.dice.robots;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 class BoardGraphicsComponent extends JComponent implements Game.Listener {
 
-    private static final Dimension TILE_PIXELS = new Dimension(9,9);
-    private static final Dimension BOARD_PADDING_PIXELS = new Dimension(5,5);
-    private static final Dimension BOARD_PIXELS = new Dimension(Board.TILES.width * TILE_PIXELS.width, Board.TILES.height * TILE_PIXELS.height);
-    private static final Dimension BOARD_WITH_PADDING_PIXELS = new Dimension(BOARD_PIXELS.width+BOARD_PADDING_PIXELS.width*2, BOARD_PIXELS.height+BOARD_PADDING_PIXELS.height*2);
+    private static final Dimension CAMERA = new Dimension(27,27);
+    private static final Dimension TILE = new Dimension(27,27);
+    private static final Dimension PADDING = new Dimension(0,0);
+    private static final Dimension VISIBLE = new Dimension(CAMERA.width * TILE.width, CAMERA.height * TILE.height);
+    private static final Dimension BOARD_WITH_PADDING = new Dimension(VISIBLE.width+ PADDING.width*2, VISIBLE.height+ PADDING.height*2);
+
     private static final Color GRID_LINE_COLOR = new Color(183, 183, 183);
     private static final Color GRID_FILL_COLOR = new Color(217, 217, 217);
 
@@ -35,22 +38,28 @@ class BoardGraphicsComponent extends JComponent implements Game.Listener {
     }
 
     private static Rectangle getTileRectangle(Board.Position boardPosition) {
-        Point tileCoordinate = new Point(boardPosition.x * TILE_PIXELS.width+ BOARD_PADDING_PIXELS.width, BOARD_PIXELS.height - TILE_PIXELS.height - boardPosition.y * TILE_PIXELS.height + BOARD_PADDING_PIXELS.height);
-        return new Rectangle(tileCoordinate.x, tileCoordinate.y, TILE_PIXELS.width, TILE_PIXELS.height);
+        int x = boardPosition.x * TILE.width + PADDING.width;
+        int y = VISIBLE.height - TILE.height - boardPosition.y * TILE.height + PADDING.height;
+        Point tileCoordinate = new Point(x,y);
+        return new Rectangle(tileCoordinate.x, tileCoordinate.y, TILE.width, TILE.height);
     }
 
 
     @Override
     public void paint(Graphics g) {
-        board.positions().forEach(pos -> {
-            Rectangle tile = getTileRectangle(pos);
+
+        Board.Position from = board.getPlayerPosition().plus(-CAMERA.width/2, -CAMERA.height/2);
+        Board.Position to = board.getPlayerPosition().plus(CAMERA.width/2+1, CAMERA.height/2+1);
+
+        board.positions(from, to).forEach(pos -> {
+            Rectangle tile = getTileRectangle(pos.plus(-board.getPlayerPosition().x+CAMERA.width/2, -board.getPlayerPosition().y+CAMERA.height/2));
             g.setColor(GRID_FILL_COLOR);
             g.fillRect(tile.x, tile.y, tile.width, tile.height);
             g.setColor(GRID_LINE_COLOR);
             g.drawRect(tile.x, tile.y, tile.width, tile.height);
             board.getTileContent(pos)
                     .map(this::getImage)
-                    .ifPresent(image -> g.drawImage(image, tile.x, tile.y, null));
+                    .ifPresent(image -> g.drawImage(image, tile.x, tile.y, tile.width, tile.height, null));
         });
     }
 
@@ -67,7 +76,7 @@ class BoardGraphicsComponent extends JComponent implements Game.Listener {
 
     @Override
     public Dimension getPreferredSize() {
-        return BOARD_WITH_PADDING_PIXELS;
+        return BOARD_WITH_PADDING;
     }
 
     @Override
