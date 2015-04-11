@@ -2,7 +2,6 @@ package com.linuxgods.dice.robots;
 
 import javax.swing.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.Queue;
@@ -23,40 +22,26 @@ public class Main {
         jFrame.setVisible(true);
 
         Queue<Integer> inputQueue = new LinkedList<>();
-        jFrame.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                inputQueue.add(e.getKeyCode());
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
-            }
-        });
+        jFrame.addKeyListener(new KeyListener(inputQueue));
 
         Logic logic = new Logic(board);
         while (true) {
-            Direction direction = getDirection(getNextKeyCode(inputQueue));
-            logic.update(direction);
-            boardGraphicsComponent.repaint();
+            int nextKeyCode = getNextKeyCode(inputQueue);
+            Direction.forKeyCode(nextKeyCode)
+                    .ifPresent(direction -> {
+                        System.out.println(direction);
+                        logic.update(direction);
+                        boardGraphicsComponent.repaint();
+                    });
         }
     }
 
-    private static Direction getDirection(Direction keyCode) {
-        return null;
-    }
+    private static int getNextKeyCode(Queue<Integer> inputQueue) {
 
-    private static Direction getNextKeyCode(Queue<Integer> inputQueue) {
-        int keyCode;
         while (true) {
             Optional<Integer> optionalKeyCode = Optional.ofNullable(inputQueue.poll());
             if (optionalKeyCode.isPresent()) {
-                keyCode = optionalKeyCode.get();
+                return optionalKeyCode.get();
             }
             try {
                 Thread.sleep(100);
@@ -64,4 +49,25 @@ public class Main {
         }
     }
 
+    private static class KeyListener implements java.awt.event.KeyListener {
+        private final Queue<Integer> inputQueue;
+
+        public KeyListener(Queue<Integer> inputQueue) {
+            this.inputQueue = inputQueue;
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+
+        }
+
+        @Override
+        public void keyPressed(KeyEvent e) {
+            inputQueue.add(e.getKeyCode());
+        }
+
+        @Override
+        public void keyReleased(KeyEvent e) {
+        }
+    }
 }
