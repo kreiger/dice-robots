@@ -17,12 +17,12 @@ public class Board {
     }
 
     public Position getPlayerPosition() {
-        return getCoordinatesFor(TileContent.PLAYER)
+        return getPositionsFor(TileContent.PLAYER)
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("No player!?"));
     }
 
-    public Stream<Position> getCoordinatesFor(TileContent tileContent) {
+    public Stream<Position> getPositionsFor(TileContent tileContent) {
         return tiles.entrySet().stream()
                 .filter(entry -> entry.getValue() == tileContent)
                 .map(Map.Entry::getKey);
@@ -32,11 +32,15 @@ public class Board {
         tiles.put(Position, tileContent);
     }
 
-    public void clearTile(Position position) {
-        tiles.remove(position);
+    public Position randomEmptyPosition() {
+        Position position = getRandomPosition();
+        while (getTileContent(position).isPresent()) {
+            position = getRandomPosition();
+        }
+        return position;
     }
 
-    public Position randomCoordinate() {
+    private Position getRandomPosition() {
         return new Position(random.nextInt(TILES.width), random.nextInt(TILES.height));
     }
 
@@ -52,7 +56,8 @@ public class Board {
     public enum TileContent {
         PLAYER,
         ALIEN,
-        PILE;
+        PILE,
+        TOMBSTONE
     }
 
     public static class Position {

@@ -8,31 +8,28 @@ import static com.linuxgods.dice.robots.Board.Position.pos;
 import static com.linuxgods.dice.robots.Board.TileContent.PLAYER;
 
 public class Game {
-    private final Board initialBoard;
 
-    public Game() {
-        this.initialBoard = initBoard();
-    }
-
-    private static Board initBoard() {
-        Board board = new Board();
-        board.setTileContent(pos(10, 10), PLAYER);
+    private Board initBoard() {
+        BoardBuilder boardBuilder = new BoardBuilder()
+                .setPlayerPosition(pos(10, 10));
         IntStream.range(0, 10)
-                .forEach(i -> board.setTileContent(board.randomCoordinate(), Board.TileContent.ALIEN));
-        return board;
+                .forEach(i -> boardBuilder.placeRandomAlien());
+        return boardBuilder.build();
     }
 
     public void mainLoop(BlockingQueue<Integer> keyCodeQueue, Listener listener) {
-        Logic logic = new Logic(initialBoard);
-        listener.boardUpdated(initialBoard);
+        Board initBoard = initBoard();
+        Logic logic = new Logic();
+        listener.boardUpdated(initBoard);
         getKeyCodes(keyCodeQueue)
                 .mapToObj(Direction::forKeyCode)
                 .filter(Optional::isPresent).map(Optional::get)
-                .forEach(direction -> {
-                    System.out.println(direction);
-                    logic.update(direction);
-                    listener.boardUpdated(null);
-                });
+                .peek(System.out::println)
+                .reduce(initBoard, (initialBoard, direction) -> {
+                    final Board updatedBoard = logic.update(initialBoard, direction);
+                    listener.boardUpdated(updatedBoard);
+                    return updatedBoard;
+                }, (b1, b2) -> (b1));
     }
 
     private static IntStream getKeyCodes(BlockingQueue<Integer> inputQueue) {

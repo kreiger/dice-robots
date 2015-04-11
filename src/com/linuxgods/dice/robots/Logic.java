@@ -4,66 +4,41 @@ import com.linuxgods.dice.robots.Board.Position;
 import com.linuxgods.dice.robots.Board.TileContent;
 
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.linuxgods.dice.robots.Board.TileContent.*;
-import static com.linuxgods.dice.robots.GameState.*;
 
 class Logic {
-    private Board board;
 
-    public Logic(Board board) {
-        this.board = board;
-    }
-
-    public GameState update(Direction direction) {
-        boolean dead = movePlayer(direction);
-        if (dead) {
-            return GAME_OVER;
-        }
-        dead = moveRobots();
-        if (dead) {
-            return GAME_OVER;
-        }
-        scrapRobots();
-        return GameState.RUNNING;
-    }
-
-    private boolean movePlayer(Direction direction) {
-        final Position initialPlayerPosition = board.getPlayerPosition();
-        final Position newPosition = initialPlayerPosition.move(direction);
-        final Optional<TileContent> contentOnNewPosition = board.getTileContent(newPosition);
+    public Board update(Board initialBoard, Direction direction) {
+        final Position newPlayerPosition = initialBoard.getPlayerPosition().move(direction);
+        final Optional<TileContent> contentOnNewPosition = initialBoard.getTileContent(newPlayerPosition);
         boolean dead = contentOnNewPosition
-                .filter(tile -> (tile == ALIEN || tile == PILE))
+                .filter(this::isDeadly)
                 .isPresent();
+
+        final BoardBuilder boardBuilder = new BoardBuilder();
         if (dead) {
-            return true;
+            boardBuilder
+                    .copyAllAliens(initialBoard)
+                    .setTombstone(newPlayerPosition);
         } else {
-            moveTile(initialPlayerPosition, newPosition);
-            return false;
+            boardBuilder.setPlayerPosition(newPlayerPosition);
+            moveAliens(newPlayerPosition, initialBoard, boardBuilder);
         }
+        return boardBuilder.build();
     }
 
-    private void moveTile(Position from, Position to) {
-        board.getTileContent(from).ifPresent(tile -> {
-            board.clearTile(from);
-            board.setTileContent(to, tile);
-        });
+    private boolean isDeadly(TileContent tile) {
+        return tile == ALIEN || tile == PILE;
     }
 
-    private boolean moveRobots() {
-        board.getCoordinatesFor(ALIEN).forEach(initialRobotPosition -> {
-            final Direction directionToPlayer = getDirectionToPlayer(initialRobotPosition);
-            Position newRobotPosition = initialRobotPosition.move(directionToPlayer);
-            moveTile(initialRobotPosition, newRobotPosition);
-        });
+    private boolean moveAliens(Position playerPosition, Board initialBoard, BoardBuilder boardBuilder) {
+        for (Position initialAlienPosition : initialBoard.getPositionsFor(ALIEN).collect(Collectors.toList())) {
+            final Direction directionToPlayer = initialAlienPosition.getDirectionTo(playerPosition);
+            Position newAlienPosition = initialAlienPosition.move(directionToPlayer);
+            boardBuilder.setAlienPosition(newAlienPosition);
+        }
         return false;
-    }
-
-    private void scrapRobots() {
-
-    }
-
-    private Direction getDirectionToPlayer(Position robotPosition) {
-        return robotPosition.getDirectionTo(board.getPlayerPosition());
     }
 }
