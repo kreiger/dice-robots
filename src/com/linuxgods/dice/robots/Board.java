@@ -48,7 +48,7 @@ public class Board {
     public enum TileContent {
         PLAYER,
         ROBOT,
-        SCRAP;
+        PILE;
     }
 
     public static class Position {

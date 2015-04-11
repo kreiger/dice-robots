@@ -11,17 +11,18 @@ class BoardGraphicsComponent extends JComponent {
     private static final Dimension BOARD_PADDING_PIXELS = new Dimension(5,5);
     private static final Dimension BOARD_PIXELS = new Dimension(Board.TILES.width * TILE_PIXELS.width, Board.TILES.height * TILE_PIXELS.height);
     private static final Dimension BOARD_WITH_PADDING_PIXELS = new Dimension(BOARD_PIXELS.width+BOARD_PADDING_PIXELS.width*2, BOARD_PIXELS.height+BOARD_PADDING_PIXELS.height*2);
-    private static final Color GRID_LINE_COLOR = new Color(172, 172, 172);
-    private static final Color GRID_FILL_COLOR = new Color(198, 198, 198);
+    private static final Color GRID_LINE_COLOR = new Color(183, 183, 183);
+    private static final Color GRID_FILL_COLOR = new Color(217, 217, 217);
 
     private static final Image PLAYER_IMAGE;
     private static final Image ALIEN_IMAGE;
-
+    private static final Image PILE_IMAGE;
 
     static {
         try {
             PLAYER_IMAGE = ImageIO.read(BoardGraphicsComponent.class.getResourceAsStream("player.png"));
             ALIEN_IMAGE = ImageIO.read(BoardGraphicsComponent.class.getResourceAsStream("alien.png"));
+            PILE_IMAGE = ImageIO.read(BoardGraphicsComponent.class.getResourceAsStream("pile.png"));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,6 +58,8 @@ class BoardGraphicsComponent extends JComponent {
         switch (tileContent) {
             case PLAYER:
                 return PLAYER_IMAGE;
+            case PILE:
+                return PILE_IMAGE;
             default:
                 return ALIEN_IMAGE;
         }
